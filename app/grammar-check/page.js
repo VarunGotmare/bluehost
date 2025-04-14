@@ -14,30 +14,31 @@ export default function GrammarCheckPage() {
 
     const checkGrammar = async () => {
         setIsChecking(true);
-        setGrammarSuggestions([]);
         try {
             const response = await fetch("/api/grammar-check", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text: inputText }),
             });
-
+    
             if (!response.ok) throw new Error("Grammar check failed.");
-
+    
             const data = await response.json();
             const { suggestions, corrected } = data;
-
+    
+            // Always store the result so Accept can work
             setGrammarSuggestions([{ issue: suggestions, replacement: corrected }]);
         } catch (error) {
             console.error("Grammar check failed:", error);
         }
         setIsChecking(false);
     };
-
+    
     const handleAcceptChange = (index) => {
-        setInputText(grammarSuggestions[index].replacement);
+        setInputText(grammarSuggestions[index].replacement); // ✅ set corrected paragraph
         setGrammarSuggestions([]);
     };
+    
 
     const handleDiscardChange = (index) => {
         setGrammarSuggestions([]);
