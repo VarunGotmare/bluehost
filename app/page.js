@@ -31,19 +31,19 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: inputText, level: "medium" }), // Default level set to "medium"
       });
-  
+
       if (!res.body) {
         setSummary("No response body.");
         return;
       }
-  
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder("utf-8");
-  
+
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-  
+
         const chunk = decoder.decode(value, { stream: true });
         setSummary((prev) => prev + chunk);
       }
@@ -51,9 +51,9 @@ export default function Home() {
       console.error("Streaming error:", err);
       setSummary("Something went wrong while summarizing.");
     }
-};
+  };
 
-  
+
 
 
 

@@ -1,4 +1,4 @@
-import {connectDB} from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import User from "../../../../models/User";
 import jwt from "jsonwebtoken";
 
@@ -15,7 +15,7 @@ export async function GET(req) {
 
     const token = authHeader.split(" ")[1];
     let decoded;
-    
+
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {

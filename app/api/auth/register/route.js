@@ -1,15 +1,15 @@
-import {connectDB} from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import User from "../../../../models/User";
 import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
     await connectDB();
-    
+
     const body = await req.json(); // Parse JSON body
     const { username, email, password } = body;
 
-    
+
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -24,11 +24,11 @@ export async function POST(req) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Save user with hashed password
-    const newUser = new User({ 
-      username, 
-      email, 
-      password: hashedPassword, 
-      
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+
     });
 
     await newUser.save();
