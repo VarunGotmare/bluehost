@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import HoverBar from "@/components/HoverBar"; // Import HoverBar
 
 export default function ParaphrasePage() {
     const [inputText, setInputText] = useState("");
@@ -58,59 +59,68 @@ export default function ParaphrasePage() {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-white py-10">
-            <div className="bg-white p-10 rounded-3xl shadow-lg w-4/5 lg:w-3/4 xl:w-2/3">
-                {/* Title */}
-                <h1 className="text-3xl font-semibold text-center text-blue-600 mb-6">AI Text Paraphraser</h1>
+        <div className="min-h-screen bg-white px-6 md:px-16 py-12 space-y-12 font-[Poppins,sans-serif]">
+            {/* HoverBar Component */}
+            <HoverBar /> {/* Render HoverBar on this page */}
 
-                <div className="flex gap-6 mb-6">
-                    {/* Left - Input Text Area */}
-                    <div className="w-1/2">
-                        <label className="block text-lg font-semibold text-gray-800 mb-2">Enter Text</label>
-                        <textarea
-                            value={inputText}
-                            onChange={(e) => setInputText(e.target.value)}
-                            className="w-full h-72 p-6 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Paste or write your content here..."
-                        />
-                    </div>
+            {/* Heading */}
+            <div className="text-center">
+                <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-2">
+                    AI Text Paraphraser
+                </h1>
+                <p className="text-gray-500 text-sm">
+                    Paraphrase your text instantly with AI assistance.
+                </p>
+            </div>
 
-                    {/* Right - Paraphrased Text Area */}
-                    <div className="w-1/2">
-                        <label className="block text-lg font-semibold text-gray-800 mb-2">Paraphrased Text</label>
-                        <textarea
-                            value={paraphrasedText}
-                            readOnly
-                            className="w-full h-72 p-6 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Your paraphrased content will appear here..."
-                        />
-                    </div>
+            {/* Text Areas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Input Text */}
+                <div className="flex flex-col">
+                    <label className="text-lg font-medium text-gray-700 mb-2">Enter Text</label>
+                    <textarea
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        className="flex-grow min-h-[300px] p-5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 resize-none"
+                        placeholder="Paste or write your content here..."
+                    />
                 </div>
 
-                {/* Paraphrase Type Buttons */}
-                <div className="flex justify-center gap-4 mb-6">
-                    {paraphraseTypes.map((type) => (
-                        <button
-                            key={type.value}
-                            onClick={() => handleTypeChange(type.value)}
-                            className={`px-6 py-2 rounded-lg font-semibold text-lg transition-all duration-300 
-                                ${paraphraseType === type.value ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"} 
-                                hover:bg-blue-500 hover:text-white`}
-                        >
-                            {type.label}
-                        </button>
-                    ))}
+                {/* Output Paraphrased Text */}
+                <div className="flex flex-col">
+                    <label className="text-lg font-medium text-gray-700 mb-2">Paraphrased Text</label>
+                    <textarea
+                        value={paraphrasedText}
+                        readOnly
+                        className="flex-grow min-h-[300px] p-5 border border-gray-300 rounded-xl bg-gray-50 text-sm text-gray-800 overflow-auto resize-none"
+                        placeholder="Your paraphrased content will appear here..."
+                    />
                 </div>
+            </div>
 
-                {/* Button to Trigger Paraphrasing */}
-                <div className="flex justify-center">
+            {/* Paraphrase Type Buttons */}
+            <div className="flex justify-center gap-4 mb-6">
+                {paraphraseTypes.map((type) => (
                     <button
-                        onClick={handleParaphrase}
-                        className="mt-4 w-48 px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all"
+                        key={type.value}
+                        onClick={() => handleTypeChange(type.value)}
+                        className={`px-6 py-2 rounded-lg font-semibold text-lg transition-all duration-300 
+                            ${paraphraseType === type.value ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"} 
+                            hover:bg-blue-500 hover:text-white`}
                     >
-                        Paraphrase
+                        {type.label}
                     </button>
-                </div>
+                ))}
+            </div>
+
+            {/* Button to Trigger Paraphrasing */}
+            <div className="flex justify-center">
+                <button
+                    onClick={handleParaphrase}
+                    className="mt-4 px-6 py-3 bg-blue-900 text-white rounded-full hover:bg-blue-950 transition font-medium"
+                >
+                    Paraphrase
+                </button>
             </div>
         </div>
     );

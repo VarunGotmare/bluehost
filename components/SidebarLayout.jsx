@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
 import { UserContext } from "@/context/UserContext";
-import { User, FileText, Clipboard, Edit, Text } from "lucide-react";
+import { User } from "lucide-react";
 
-export default function SidebarLayout({ children }) {
+export default function NavbarLayout({ children }) {
     const pathname = usePathname();
     const { logout } = useContext(UserContext);
     const isAuthRoute = pathname === "/login" || pathname === "/register";
@@ -18,67 +18,18 @@ export default function SidebarLayout({ children }) {
             {/* Top Navbar - Fixed */}
             <Navbar />
 
-            <div className="flex flex-1 mt-16"> {/* Add margin to avoid overlap with navbar */}
-                {/* Sidebar under the navbar - Fixed */}
-                <aside className="w-20 p-2 border-r border-[#d1d9e6] bg-white flex flex-col items-center fixed top-16 bottom-0 left-0">
-                    <nav className="space-y-6 mt-4">
-                        <NavIconItem
-                            href="/paraphrase"
-                            label="Paraphrase"
-                            Icon={<Edit size={20} />}
-                            active={pathname === "/paraphrase"}
-                        />
-                        <NavIconItem
-                            href="/grammar-check"
-                            label="Grammar Check"
-                            Icon={<Clipboard size={20} />}
-                            active={pathname === "/grammar-check"}
-                        />
-                        <NavIconItem
-                            href="/plagiarism-check"
-                            label="Plagiarism Check"
-                            Icon={<FileText size={20} />}
-                            active={pathname === "/plagiarism-check"}
-                        />
-                        <NavIconItem
-                            href="/summarize"
-                            label="Summarize"
-                            Icon={<Text size={20} />}
-                            active={pathname === "/summarize"}
-                        />
-
-                    </nav>
-                </aside>
-
-                {/* Main content */}
-                <main className="flex-1 p-4 ml-20 overflow-auto">{children}</main> {/* Adjusted margin-left */}
-            </div>
+            {/* Main content, with padding-top to offset fixed navbar */}
+            <main className="flex-1 p-4 pt-20">{children}</main>
         </div>
     );
 }
 
-function NavIconItem({ href, label, Icon, active }) {
-    return (
-        <Link
-            href={href}
-            className={`flex flex-col items-center text-center transition-all hover:text-blue-600 ${active ? "text-blue-600" : "text-gray-600"
-                }`}
-        >
-            <div
-                className={`p-2 rounded-md ${active ? "bg-blue-100" : "hover:bg-blue-50"
-                    }`}
-            >
-                {Icon}
-            </div>
-            <span className="text-[10px] mt-1">{label}</span>
-        </Link>
-    );
-}
-
 function Navbar() {
+    const pathname = usePathname(); // Get the current route
+
     return (
         <nav className="h-16 w-full flex items-center justify-between px-6 bg-white border-b border-[#d1d9e6] fixed top-0 left-0 right-0 z-10">
-            {/* Left: BlueHost Branding */}
+            {/* Left: Branding */}
             <h1
                 className="text-xl text-blue-600"
                 style={{ fontFamily: "var(--font-pacifico)" }}
@@ -86,15 +37,58 @@ function Navbar() {
                 BlueHost
             </h1>
 
-            {/* Right: Links */}
+            {/* Center: Navigation Links */}
             <div className="flex items-center space-x-6">
-                <Link href="/about" className="hover:text-gray-500">
+                <Link
+                    href="/"
+                    className={`hover:text-gray-500 px-3 py-2 rounded-lg ${
+                        pathname === "/" ? "bg-blue-100 text-blue-600 font-semibold" : ""
+                    }`}
+                >
+                    Home
+                </Link>
+                <Link
+                    href="/tools"
+                    className={`hover:text-gray-500 px-3 py-2 rounded-lg ${
+                        pathname === "/tools" ? "bg-blue-100 text-blue-600 font-semibold" : ""
+                    }`}
+                >
+                    Tools
+                </Link>
+                <Link
+                    href="/whats-new"
+                    className={`hover:text-gray-500 px-3 py-2 rounded-lg ${
+                        pathname === "/whats-new" ? "bg-blue-100 text-blue-600 font-semibold" : ""
+                    }`}
+                >
+                    What's New
+                </Link>
+                <Link
+                    href="/about"
+                    className={`hover:text-gray-500 px-3 py-2 rounded-lg ${
+                        pathname === "/about" ? "bg-blue-100 text-blue-600 font-semibold" : ""
+                    }`}
+                >
                     About Us
                 </Link>
-                <Link href="/contact" className="hover:text-gray-500">
+                <Link
+                    href="/contact"
+                    className={`hover:text-gray-500 px-3 py-2 rounded-lg ${
+                        pathname === "/contact" ? "bg-blue-100 text-blue-600 font-semibold" : ""
+                    }`}
+                >
                     Contact
                 </Link>
-                <Link href="/profile" className="hover:text-gray-500">
+            </div>
+
+            {/* Right: Profile Icon */}
+            <div className="flex items-center">
+                <Link
+                    href="/profile"
+                    className={`hover:text-gray-500 px-3 py-2 rounded-lg ${
+                        pathname === "/profile" ? "bg-blue-100 text-blue-600 font-semibold" : ""
+                    }`}
+                >
                     <User className="h-6 w-6" />
                 </Link>
             </div>
