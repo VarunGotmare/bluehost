@@ -1,41 +1,71 @@
 "use client";
-import { FileText, FileCheck, FileSearch, Edit } from "lucide-react"; // Import Lucide icons
-import Link from "next/link"; // Import Link component from Next.js for navigation
+
+import { usePathname, useRouter } from "next/navigation"; // ✅ Added useRouter
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Wrench, X, TextQuote, PenLine, SpellCheck, CopyCheck } from "lucide-react";
 
 export default function HoverBar() {
-    // Define the links for tools along with their icons (from Lucide)
-    const toolsLinks = [
-        { name: "Grammar Checker", href: "/grammar-check", icon: <FileText size={24} /> },
-        { name: "Plagiarism Checker", href: "/plagiarism-check", icon: <FileCheck size={24} /> },
-        { name: "Summarizer", href: "/summarize", icon: <FileSearch size={24} /> },
-        { name: "Paraphrase", href: "/paraphrase", icon: <Edit size={24} /> },
-    ];
+  const pathname = usePathname();
+  const router = useRouter(); // ✅ Hook to navigate programmatically
+  const [isOpen, setIsOpen] = useState(false);
 
-    return (
-        <div className="fixed top-1/2 right-0 transform -translate-y-1/2 w-32 bg-white text-gray-900 rounded-2xl shadow-xl p-4 space-y-6 transition-all z-50">
-            {/* Title */}
-            <div className="text-xxs font-semibold text-center mb-4 text-blue-900 w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                Tools
-            </div>
-            {/* Tool List */}
-            <div className="flex flex-col items-center space-y-4 w-full">
-                {toolsLinks.map((tool, index) => (
-                    <Link
-                        key={index}
-                        href={tool.href}
-                        className="flex flex-col items-center text-xxs hover:text-yellow-400 transition-all focus:outline-none w-full overflow-hidden"
-                    >
-                        {/* Icon with color */}
-                        <div className="mb-1 text-blue-500 hover:text-blue-700 transition-all">
-                            {tool.icon}
-                        </div>
-                        {/* Tool Name with ellipsis overflow */}
-                        <span className="text-gray-700 hover:text-blue-900 transition-all text-xs w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                            {tool.name}
-                        </span>
-                    </Link>
-                ))}
-            </div>
-        </div>
-    );
+  const excludedRoutes = ["/login", "/register"];
+  if (excludedRoutes.includes(pathname)) return null;
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
+
+  const tools = [
+    { icon: TextQuote, label: "Summarizer", route: "/summarize" },
+    { icon: PenLine, label: "Paraphraser", route: "/paraphrase" },
+    { icon: SpellCheck, label: "Grammar", route: "/grammar-check" },
+    { icon: CopyCheck, label: "Plagiarism", route: "/plagiarism-check" },
+  ];
+
+  const handleToolClick = (route) => {
+    router.push(route); // ✅ Navigate to the selected tool's page
+    setIsOpen(false); // Close the HoverBar once a tool is clicked
+  };
+
+  return (
+    <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start space-y-3">
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, x: -20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.9, x: -20 }}
+            transition={{ type: "spring", stiffness: 260, damping: 25 }}
+            className="bg-white border shadow-xl rounded-2xl p-3 space-y-4 w-24 mb-2"
+          >
+            {tools.map((tool, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col items-center text-center text-xs text-gray-700 hover:text-blue-600 cursor-pointer transition"
+                onClick={() => handleToolClick(tool.route)} // ✅ Added onClick for tool click
+              >
+                <tool.icon size={22} />
+                <span className="mt-1">{tool.label}</span>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Toggle Button */}
+      <motion.button
+        layout
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 transition"
+      >
+        {isOpen ? <X size={24} /> : <Wrench size={24} />}
+      </motion.button>
+    </div>
+  );
 }
