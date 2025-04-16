@@ -55,7 +55,7 @@ export default function SummarizePage() {
   return (
     <div className="min-h-screen bg-white px-6 md:px-16 py-12 space-y-12 font-[Poppins,sans-serif]">
       {/* HoverBar Component */}
-      <HoverBar /> {/* Render HoverBar on this page */}
+      
 
       {/* Heading */}
       <div className="text-center">
