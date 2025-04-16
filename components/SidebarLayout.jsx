@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { UserContext } from "@/context/UserContext";
 import { User } from "lucide-react";
 
@@ -26,6 +26,35 @@ export default function NavbarLayout({ children }) {
 
 function Navbar() {
     const pathname = usePathname(); // Get the current route
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // State to toggle profile menu
+    const { logout } = useContext(UserContext);
+    const menuRef = useRef(null); // Reference to the profile menu
+
+    // Close the profile menu when clicking outside of it
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsProfileMenuOpen(false);
+            }
+        };
+
+        // Add event listener for click outside
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            // Cleanup the event listener
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    const handleProfileClick = () => {
+        setIsProfileMenuOpen((prev) => !prev); // Toggle the profile menu visibility
+    };
+
+    const handleLogout = () => {
+        logout(); // Call logout function from UserContext
+        setIsProfileMenuOpen(false); // Close the menu after logout
+    };
 
     return (
         <nav className="h-16 w-full flex items-center justify-between px-6 bg-white border-b border-[#d1d9e6] fixed top-0 left-0 right-0 z-10">
@@ -82,15 +111,35 @@ function Navbar() {
             </div>
 
             {/* Right: Profile Icon */}
-            <div className="flex items-center">
-                <Link
-                    href="/profile"
-                    className={`hover:text-gray-500 px-3 py-2 rounded-lg ${
-                        pathname === "/profile" ? "bg-blue-100 text-blue-600 font-semibold" : ""
-                    }`}
+            <div className="flex items-center relative">
+                <button
+                    onClick={handleProfileClick}
+                    className={`hover:text-gray-500 px-3 py-2 rounded-lg`}
                 >
                     <User className="h-6 w-6" />
-                </Link>
+                </button>
+
+                {/* Profile Menu */}
+                {isProfileMenuOpen && (
+                    <div
+                        ref={menuRef}
+                        className="absolute right-0 mt-2 bg-white border shadow-lg rounded-lg w-40"
+                        style={{ top: "100%" }} // Add this to ensure it's below the profile button
+                    >
+                        <button
+                            className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                            onClick={() => {}}
+                        >
+                            Profile
+                        </button>
+                        <button
+                            className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+                            onClick={handleLogout} // Logout Button
+                        >
+                            Logout
+                        </button>
+                    </div>
+                )}
             </div>
         </nav>
     );

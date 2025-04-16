@@ -1,14 +1,15 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation"; // ✅ Added useRouter
-import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wrench, X, TextQuote, PenLine, SpellCheck, CopyCheck } from "lucide-react";
 
 export default function HoverBar() {
   const pathname = usePathname();
-  const router = useRouter(); // ✅ Hook to navigate programmatically
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const hoverBarRef = useRef(null); // Reference to the HoverBar container
 
   const excludedRoutes = ["/login", "/register"];
   if (excludedRoutes.includes(pathname)) return null;
@@ -18,7 +19,20 @@ export default function HoverBar() {
       if (e.key === "Escape") setIsOpen(false);
     };
     window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
+
+    const handleClickOutside = (e) => {
+      if (hoverBarRef.current && !hoverBarRef.current.contains(e.target)) {
+        setIsOpen(false); // Close the HoverBar if click is outside
+      }
+    };
+
+    // Add click event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+      document.removeEventListener("mousedown", handleClickOutside); // Cleanup the event listener
+    };
   }, []);
 
   const tools = [
@@ -29,12 +43,12 @@ export default function HoverBar() {
   ];
 
   const handleToolClick = (route) => {
-    router.push(route); // ✅ Navigate to the selected tool's page
-    setIsOpen(false); // Close the HoverBar once a tool is clicked
+    router.push(route);
+    setIsOpen(false);
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start space-y-3">
+    <div ref={hoverBarRef} className="fixed bottom-6 left-6 z-50 flex flex-col items-start space-y-3">
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
@@ -48,7 +62,7 @@ export default function HoverBar() {
               <div
                 key={idx}
                 className="flex flex-col items-center text-center text-xs text-gray-700 hover:text-blue-600 cursor-pointer transition"
-                onClick={() => handleToolClick(tool.route)} // ✅ Added onClick for tool click
+                onClick={() => handleToolClick(tool.route)}
               >
                 <tool.icon size={22} />
                 <span className="mt-1">{tool.label}</span>
